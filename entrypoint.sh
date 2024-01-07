@@ -44,21 +44,21 @@ create_pull_request() {
 # Check for branch pattern and create PR
 if ! pull_request_exists; then
     case $BRANCH_NAME in
-      $FEATURE_PREFIX*)
-        TITLE="feat: ${BRANCH_NAME#$FEATURE_PREFIX}"
+      "${FEATURE_PREFIX}"*)
+        TITLE="feat: ${BRANCH_NAME#${FEATURE_PREFIX}}"
         create_pull_request "$DEVELOP_BRANCH" "$TITLE"
         ;;
-      $BUGFIX_PREFIX*)
-        TITLE="fix: ${BRANCH_NAME#$BUGFIX_PREFIX}"
+      "${BUGFIX_PREFIX}"*)
+        TITLE="fix: ${BRANCH_NAME#${BUGFIX_PREFIX}}"
         create_pull_request "$DEVELOP_BRANCH" "$TITLE"
         ;;
-      $RELEASE_PREFIX*)
-        VERSION=${BRANCH_NAME#$RELEASE_PREFIX}
+      "${RELEASE_PREFIX}"*)
+        VERSION=${BRANCH_NAME#${RELEASE_PREFIX}}
         TITLE="chore(release): prepare for version $VERSION"
         create_pull_request "$MASTER_BRANCH" "$TITLE"
         ;;
-      $HOTFIX_PREFIX*)
-        VERSION=${BRANCH_NAME#$HOTFIX_PREFIX}
+      "${HOTFIX_PREFIX}"*)
+        VERSION=${BRANCH_NAME#${HOTFIX_PREFIX}}
         TITLE="chore(release): prepare for version $VERSION"
         create_pull_request "$MASTER_BRANCH" "$TITLE"
         ;;
