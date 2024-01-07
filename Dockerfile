@@ -5,10 +5,9 @@ FROM alpine:latest
 RUN apk update && \
     apk add --no-cache git github-cli
 
-# ONBUILD instructions
-# These instructions are executed when a derived image is being built
-ONBUILD COPY entrypoint.sh /entrypoint.sh
-ONBUILD RUN chmod +x /entrypoint.sh
+# Copy the entrypoint script and set permissions
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
 # Set the entrypoint script to be executed when the container starts
 ENTRYPOINT ["/entrypoint.sh"]

@@ -10,6 +10,9 @@ set -eu
 GITHUB_TOKEN=${1:-$GITHUB_TOKEN}
 echo "$GITHUB_TOKEN" | gh auth login --with-token
 
+# Mark the current directory as a safe directory for Git operations
+git config --global --add safe.directory "$PWD"
+
 # Setup variables
 MASTER_BRANCH=${2:-"master"}
 DEVELOP_BRANCH=${3:-"develop"}
@@ -20,6 +23,12 @@ HOTFIX_PREFIX=${7:-"hotfix/"}
 
 # Get the current branch name
 BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
+
+# Function to check if a pull request already exists for the current branch
+pull_request_exists() {
+    EXISTS=$(gh pr list --head "$BRANCH_NAME" --state open | wc -l)
+    [ "$EXISTS" -ne 0 ]
+}
 
 # Function to create pull request
 create_pull_request() {
@@ -33,23 +42,27 @@ create_pull_request() {
 }
 
 # Check for branch pattern and create PR
-case $BRANCH_NAME in
-  $FEATURE_PREFIX*)
-    TITLE="feat: ${BRANCH_NAME#$FEATURE_PREFIX}"
-    create_pull_request "$DEVELOP_BRANCH" "$TITLE"
-    ;;
-  $BUGFIX_PREFIX*)
-    TITLE="fix: ${BRANCH_NAME#$BUGFIX_PREFIX}"
-    create_pull_request "$DEVELOP_BRANCH" "$TITLE"
-    ;;
-  $RELEASE_PREFIX*)
-    VERSION=${BRANCH_NAME#$RELEASE_PREFIX}
-    TITLE="chore(release): prepare for version $VERSION"
-    create_pull_request "$MASTER_BRANCH" "$TITLE"
-    ;;
-  $HOTFIX_PREFIX*)
-    VERSION=${BRANCH_NAME#$HOTFIX_PREFIX}
-    TITLE="chore(release): prepare for version $VERSION"
-    create_pull_request "$MASTER_BRANCH" "$TITLE"
-    ;;
-esac
+if ! pull_request_exists; then
+    case $BRANCH_NAME in
+      $FEATURE_PREFIX*)
+        TITLE="feat: ${BRANCH_NAME#$FEATURE_PREFIX}"
+        create_pull_request "$DEVELOP_BRANCH" "$TITLE"
+        ;;
+      $BUGFIX_PREFIX*)
+        TITLE="fix: ${BRANCH_NAME#$BUGFIX_PREFIX}"
+        create_pull_request "$DEVELOP_BRANCH" "$TITLE"
+        ;;
+      $RELEASE_PREFIX*)
+        VERSION=${BRANCH_NAME#$RELEASE_PREFIX}
+        TITLE="chore(release): prepare for version $VERSION"
+        create_pull_request "$MASTER_BRANCH" "$TITLE"
+        ;;
+      $HOTFIX_PREFIX*)
+        VERSION=${BRANCH_NAME#$HOTFIX_PREFIX}
+        TITLE="hotfix: prepare for version $VERSION"
+        create_pull_request "$MASTER_BRANCH" "$TITLE"
+        ;;
+    esac
+else
+    echo "Pull request already exists for branch $BRANCH_NAME. Skipping PR creation."
+fi
