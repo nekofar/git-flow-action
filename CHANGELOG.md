@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.5] - 2024-01-07
+
+### Bug Fixes
+
+- Skip if no changes between base and current branch
+
 ## [1.0.0-alpha.4] - 2024-01-07
 
 ### Bug Fixes
