@@ -15,9 +15,6 @@ set -eu
 GITHUB_TOKEN=${1:-$GITHUB_TOKEN}
 echo "$GITHUB_TOKEN" | gh auth login --with-token
 
-# Mark the current directory as a safe directory for Git operations
-git config --global --add safe.directory "$PWD"
-
 # Setup variables
 MASTER_BRANCH=${2:-"master"}
 DEVELOP_BRANCH=${3:-"develop"}
@@ -26,8 +23,20 @@ BUGFIX_PREFIX=${5:-"bugfix/"}
 RELEASE_PREFIX=${6:-"release/"}
 HOTFIX_PREFIX=${7:-"hotfix/"}
 
+# Mark the current directory as a safe directory for Git operations
+git config --global --add safe.directory "$PWD"
+
+# Fetch and update the base branches
+git fetch origin "${MASTER_BRANCH}":"${MASTER_BRANCH}" "${DEVELOP_BRANCH}":"${DEVELOP_BRANCH}"
+
 # Get the current branch name
 BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
+
+# Function to check if there are new commits between the current branch and the base branch
+no_new_commits() {
+    BASE_BRANCH=$1
+    [ "$(git rev-list --count "$BASE_BRANCH"..HEAD)" -eq 0 ]
+}
 
 # Function to check if a pull request already exists for the current branch
 pull_request_exists() {
@@ -47,7 +56,7 @@ create_pull_request() {
 }
 
 # Check for branch pattern and create PR
-if ! pull_request_exists; then
+if ! pull_request_exists && ! no_new_commits "$DEVELOP_BRANCH"; then
     case $BRANCH_NAME in
       "$FEATURE_PREFIX"*)
         TITLE="feat: ${BRANCH_NAME#"$FEATURE_PREFIX"}"
@@ -69,6 +78,8 @@ if ! pull_request_exists; then
         ;;
     esac
     printf "%bPull request created successfully for branch %s.%b\n" "$GREEN" "$BRANCH_NAME" "$NC"
+elif no_new_commits "$DEVELOP_BRANCH"; then
+    printf "%bNo new commits between %s and %s. Skipping PR creation.%b\n" "$RED" "$BRANCH_NAME" "$DEVELOP_BRANCH" "$NC"
 else
     printf "%bPull request already exists for branch %s. Skipping PR creation.%b\n" "$RED" "$BRANCH_NAME" "$NC"
 fi
