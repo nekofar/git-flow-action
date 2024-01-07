@@ -1,5 +1,10 @@
 #!/bin/sh -l
 
+# ANSI color codes
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+NC='\033[0m' # No Color
+
 # Making sure the script stops if any of the commands fails
 set -eu
 
@@ -36,8 +41,8 @@ create_pull_request() {
     PR_TITLE=$2
     # Replace '-' with ' ' in the title
     PR_TITLE=$(echo "$PR_TITLE" | sed 's/-/ /g')
-    # Default PR body message
-    PR_BODY="Automatically created pull request. Please review."
+    # Explanatory PR body message
+    PR_BODY="This pull request has been automatically created by a script. It contains changes from the branch '${BRANCH_NAME}'. Please review the changes and merge them if appropriate."
     gh pr create --base "$BASE_BRANCH" --title "$PR_TITLE" --body "$PR_BODY"
 }
 
@@ -63,6 +68,7 @@ if ! pull_request_exists; then
         create_pull_request "$MASTER_BRANCH" "$TITLE"
         ;;
     esac
+    printf "%bPull request created successfully for branch %s.%b\n" "$GREEN" "$BRANCH_NAME" "$NC"
 else
-    echo "Pull request already exists for branch $BRANCH_NAME. Skipping PR creation."
+    printf "%bPull request already exists for branch %s. Skipping PR creation.%b\n" "$RED" "$BRANCH_NAME" "$NC"
 fi
