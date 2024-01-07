@@ -1,27 +1,48 @@
-name: 'Hello World'
-description: 'Greet someone and record the time'
-
-branding:
-  icon: terminal
-  color: gray-dark
+name: 'Git Flow'
+description: 'This action automates the creation of pull requests for branches that match predefined naming conventions. It supports custom prefixes for feature, bugfix, release, and hotfix branches. When a branch is pushed that matches one of these prefixes, the action automatically generates a pull request with a formatted title and default body message, targeting either the master or develop branch as appropriate.'
 
 inputs:
-  who-to-greet:  # id of input
-    description: 'Who to greet'
+  github-token:
+    description: 'The GitHub token used for authentication. Typically, this is the built-in GITHUB_TOKEN secret.'
     required: true
-    default: 'World'
-
-outputs:
-  time: # id of output
-    value: ${{ steps.greet.outputs.time }}
-    description: 'The time we greeted you'
+    default: ${{ github.token }}
+  master-branch:
+    description: 'The branch to target for release and hotfix pull requests, usually the master branch.'
+    required: true
+    default: 'master'
+  develop-branch:
+    description: 'The branch to target for feature and bugfix pull requests, usually the develop branch.'
+    required: true
+    default: 'develop'
+  feature-prefix:
+    description: 'The prefix for feature branches, e.g., "feature/".'
+    required: false
+    default: 'feature/'
+  bugfix-prefix:
+    description: 'The prefix for bugfix branches, e.g., "bugfix/".'
+    required: false
+    default: 'bugfix/'
+  release-prefix:
+    description: 'The prefix for release branches, e.g., "release/".'
+    required: false
+    default: 'release/'
+  hotfix-prefix:
+    description: 'The prefix for hotfix branches, e.g., "hotfix/".'
+    required: false
+    default: 'hotfix/'
 
 runs:
-  using: composite
-  steps:
-    - name: Greet and Record Time  # name of step
-      id: greet
-      run: ${{ github.action_path }}/entrypoint.sh
-      shell: bash
-      env:
-        INPUT_WHO_TO_GREET: ${{ inputs.who-to-greet }}
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.github-token }}
+    - ${{ inputs.master-branch }}
+    - ${{ inputs.develop-branch }}
+    - ${{ inputs.feature-prefix }}
+    - ${{ inputs.bugfix-prefix }}
+    - ${{ inputs.release-prefix }}
+    - ${{ inputs.hotfix-prefix }}
+
+branding:
+  icon: 'git-pull-request'
+  color: 'blue'
