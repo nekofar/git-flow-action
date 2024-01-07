@@ -10,6 +10,9 @@ set -eu
 GITHUB_TOKEN=${1:-$GITHUB_TOKEN}
 echo "$GITHUB_TOKEN" | gh auth login --with-token
 
+# Mark the current directory as a safe directory for Git operations
+git config --global --add safe.directory "$PWD"
+
 # Setup variables
 MASTER_BRANCH=${2:-"master"}
 DEVELOP_BRANCH=${3:-"develop"}
