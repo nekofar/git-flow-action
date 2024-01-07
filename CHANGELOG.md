@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.2] - 2024-01-07
+
+### Features
+
+- Add check to skip PR creation if it already exists
+
+### Bug Fixes
+
+- Resolve docker container entrypoint script error
+
+### Miscellaneous Tasks
+
+- Update workflow files for better readability
+- Add permissions to git flow workflow jobs
+
 ## [1.0.0-alpha.1] - 2024-01-07
 
 ### Features
