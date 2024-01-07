@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.1] - 2024-01-07
+
+### Features
+
+- Enhance Git Flow Action for PR Automation
+
 ## [1.0.0-alpha.0] - 2024-01-07
 
 ### Documentation
