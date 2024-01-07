@@ -59,7 +59,7 @@ if ! pull_request_exists; then
         ;;
       $HOTFIX_PREFIX*)
         VERSION=${BRANCH_NAME#$HOTFIX_PREFIX}
-        TITLE="hotfix: prepare for version $VERSION"
+        TITLE="chore(release): prepare for version $VERSION"
         create_pull_request "$MASTER_BRANCH" "$TITLE"
         ;;
     esac
