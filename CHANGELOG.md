@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.4] - 2024-01-07
+
+### Bug Fixes
+
+- Resolve the shellcheck warnings and improve the script reliability
+
 ## [1.0.0-alpha.3] - 2024-01-07
 
 ### Bug Fixes
