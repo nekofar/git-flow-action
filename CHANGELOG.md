@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.3] - 2024-01-07
+
+### Bug Fixes
+
+- Update title format for hotfix branches
+- Resolve the shellcheck warnings and improve the script reliability
+- Improve output messages and PRs body
+
 ## [1.0.0-alpha.2] - 2024-01-07
 
 ### Features
