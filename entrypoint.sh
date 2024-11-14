@@ -48,8 +48,8 @@ pull_request_exists() {
 create_pull_request() {
     BASE_BRANCH=$1
     PR_TITLE=$2
-    # Replace '-' with ' ' in the title
-    PR_TITLE=$(echo "$PR_TITLE" | sed 's/-/ /g')
+    # Replace '-' and '_' with ' ' in the title
+    PR_TITLE=$(echo "$PR_TITLE" | sed 's/[-_]/ /g')
     # Explanatory PR body message
     PR_BODY="This pull request has been automatically created by a script. It contains changes from the branch '${BRANCH_NAME}'. Please review the changes and merge them if appropriate."
     gh pr create --base "$BASE_BRANCH" --title "$PR_TITLE" --body "$PR_BODY"
